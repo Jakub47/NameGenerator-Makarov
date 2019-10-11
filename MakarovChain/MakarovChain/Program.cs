@@ -94,7 +94,7 @@ namespace MakarovChain
             }
 
 
-            string finalString = "" + choice;
+            string finalString = "";
             Random rand = new Random();
 
 
@@ -105,39 +105,47 @@ namespace MakarovChain
             //2 a p otem 3 liter i dla nich zrobić tę pętlę
             while (finalString.Length <= 6)
             {
-                if (finalString.Length < 2)
+                //for first letter get from choice of user
+                foreach (KeyValuePair<char, float> yos in letterValue[choice])
                 {
-                    //for first letter get from choice of user
-                    foreach (KeyValuePair<char, float> yos in letterValue[choice])
+                    if (rand.NextDouble() < yos.Value)
                     {
-                        if (finalString.Length >= 2) break;
-
-                        if (rand.NextDouble() < yos.Value)
-                        {
-                            finalString += yos.Key;
-                        }
+                        finalString += yos.Key;
+                        choice = yos.Key;
+                        break;
                     }
                 }
 
-                foreach (KeyValuePair<char, Dictionary<char, float>> charWithCharValues in letterValue)
-                {
-                    foreach (KeyValuePair<char, float> yos in charWithCharValues.Value)
-                    {
-                        if (finalString.Length >= 6)
-                            goto Found;
+                //if (finalString.Length < 2)
+                //{
+                //    //for first letter get from choice of user
+                //    foreach (KeyValuePair<char, float> yos in letterValue[choice])
+                //    {
+                //        if (finalString.Length >= 2) break;
 
-                        if (rand.NextDouble() < yos.Value && finalString[finalString.Length - 1] != yos.Value)
-                        {
-                            finalString += yos.Key;
-                        }
-                    }
+                //        if (rand.NextDouble() < yos.Value)
+                //        {
+                //            finalString += yos.Key;
+                //        }
+                //    }
+                //}
 
-                }
+                //foreach (KeyValuePair<char, Dictionary<char, float>> charWithCharValues in letterValue)
+                //{
+                //    foreach (KeyValuePair<char, float> yos in charWithCharValues.Value)
+                //    {
+                //        if (finalString.Length >= 6)
+                //            goto Found;
+
+                //        if (rand.NextDouble() < yos.Value && finalString[finalString.Length - 1] != yos.Value)
+                //        {
+                //            finalString += yos.Key;
+                //        }
+                //    }
+
+                //}
             }
-
             
-            Found:
-            Console.WriteLine();
             Console.WriteLine(finalString);
         }
     }
