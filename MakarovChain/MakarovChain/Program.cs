@@ -18,12 +18,7 @@ namespace MakarovChain
 
         static void Main(string[] args)
         {
-            string k = "nicol,naell,nikay,nemit,noahe,niamh,nyahj,natas,neish,nevan,natha,neell,nikos,nasha,niame,nikol,niahr,naira,naiad,nicho,naiam,nevee,noahl,nadia,noele,nikod,norah,nayya,naven,nisha,niomi,naial,noahu,nairn,naire,nikei,nerah,naria,noahr,nolan,numan,nylas,nieve,nuriy,novae,nanik,nanin,noorf,nicar,noura,niksh,nadea,navee,neahl,nichi,nairv,nanel,nahgr,novah,nevae,namra,nadar,nicky,nuran,nirne,nyahm,najma,naiom,nelia,natan,nusab,noell,niven,nayth,namee,nathi,noahj,nilet,nzube,nawar,natal,nakay,nadin,neila,nikit,niree,naila,nayaa,nawal,nadem,niani,nimra,nakae,noels,naomi,numve,nadit,nadir,navae,nyahl";
-            var z = k.Split(',').ToArray();
-            var x = z.Distinct().Count();
-            var vv = z.Count();
-
-
+           
             Random rand = new Random();
 
 
@@ -50,11 +45,12 @@ namespace MakarovChain
 
             }
 
+
             //Choice == first letter to start from , Names = Names starting with choice
 
 
             //InitialsState == get second letter count all occurence get proper next index
-            while (NamesToReturn.Count < 50)
+            while (NamesToReturn.Count < 100)
             {
                 SeriesValue = new Dictionary<string, Dictionary<string, float>>();
                 SeriesValue = InitalState(rand, choice);
@@ -63,7 +59,7 @@ namespace MakarovChain
                 do
                 {
                     getWord = GetWord(SeriesValue, rand);
-                } while (NamesToReturn.Any(a => string.Equals(a, getWord, StringComparison.CurrentCultureIgnoreCase)) 
+                } while ( getWord == null || NamesToReturn.Any(a => string.Equals(a, getWord, StringComparison.CurrentCultureIgnoreCase)) 
                          || Names.Any(a => string.Equals(a, getWord, StringComparison.CurrentCultureIgnoreCase)));
 
                 
@@ -85,6 +81,9 @@ namespace MakarovChain
         {
             string finalString = seriesValue.Keys.First();
             string twoLastLetters = seriesValue.Keys.First();
+            int c = 0; int gg = 0; int t = 0;
+            string nextLLetter = "";
+            bool b1 = false; bool b2 = false;
 
             while (finalString.Length != 7)
             {
@@ -96,9 +95,16 @@ namespace MakarovChain
 
                     if (a.Contains(twoLastLetters))
                     {
+                        c = a.IndexOf(twoLastLetters);
+                        gg = twoLastLetters.Length;
+                        t = a.Length;
+
                         if (a.IndexOf(twoLastLetters) + twoLastLetters.Length < a.Length)
                         {
                             string nextLetter = a.Substring(a.IndexOf(twoLastLetters) + twoLastLetters.Length, 1);
+                            nextLLetter = nextLetter;
+                            b1 = char.IsLetter(Convert.ToChar(nextLetter));
+                            b2 = !(string.IsNullOrEmpty(nextLetter));
 
                             if (char.IsLetter(Convert.ToChar(nextLetter)) && !(string.IsNullOrEmpty(nextLetter)))
                             {
@@ -128,6 +134,9 @@ namespace MakarovChain
                         charWithCharValues.Value[charWithCharValues.Value.ElementAt(i).Key] /= sum;
                     }
                 }
+
+                if (seriesValue[twoLastLetters].Values.Count == 0)
+                    return null;
 
                 while (true)
                 {
