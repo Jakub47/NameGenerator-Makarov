@@ -142,7 +142,7 @@ namespace MakarovChain
                 }
 
             Founded:
-                twoLastLetters = finalString.Substring(finalString.Length);
+                twoLastLetters = finalString.Substring(finalString.Length - 2);
                 seriesValue = new Dictionary<string, Dictionary<string, float>>();
                 seriesValue.Add(twoLastLetters, new Dictionary<string, float>());
             }
