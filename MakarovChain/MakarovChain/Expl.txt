@@ -1,0 +1,19 @@
+
+************************************************************************************************************************************************************************************
+																					Wersja 0.2		
+										
+										W momencie znalezienia zadanej litery przerwij obecn¹ pêtlê i zacznij now¹ ale z inn¹ liter¹
+
+
+																					Wersja 0.2		
+************************************************************************************************************************************************************************************
+
+
+************************************************************************************************************************************************************************************
+																					Wersja 0.3		
+
+Pierwsza litera jest mi potrzebna do tego ¿eby wiedzieæ gdzie mam zacz¹æ. Nastêpnie biorê kolejn¹ literê przypuœcmy a i mam ju¿ ba nastêpnie w pliku szukam wszystkich nazw z posiadaniem liter ba teraz prawdopodobientswo "wybiera" mi kolejn¹ literê np z i mam teraz baz nastêpnie w liœcie szkukam dla baz i kolejno dodaje litery jeœli nie ma to szukam dla az. Trzeba te¿ uwzglêdniæ dok¹d mogê uwzglêdniaæ wszystkie litery tzn przypuœmcy ¿e generator wylysowa³ litery Kami i teraz w liœcie zostaje znaleziony kamil i nic wiêcej wiêc program zwróci mi kamil kiedy ja chcia³em otrzymaæ jakiœ losow¹ nazwê st¹d 
+biorê zadan¹ d³ugoœæ szukanego imienia i dzielê j¹ przez 2 nastêpnie do wyniku x/2 sprawdzam litery gdy d³ugoœæ bêdzie równa x/2 lub wiêksza zaczynaæ szukaæ od indexu [x/2 -2,x/2-1]
+																					
+																					Wersja 0.3		
+************************************************************************************************************************************************************************************
