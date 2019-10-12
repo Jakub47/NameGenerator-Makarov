@@ -12,22 +12,23 @@ namespace MakarovChain
     class Program
     {
         private static List<string> Names = new List<string>();
-        private static Dictionary<string, Dictionary<string, float>> letterValue = new Dictionary<string, Dictionary<string, float> >();
+        private static Dictionary<string, Dictionary<string, float>> SeriesValue = new Dictionary<string, Dictionary<string, float>>();
+        private static List<string> NamesToReturn = new List<string>();
+        private static string finalString = "";
 
         static void Main(string[] args)
         {
-            Random rand = new Random();
+            string k = "nicol,naell,nikay,nemit,noahe,niamh,nyahj,natas,neish,nevan,natha,neell,nikos,nasha,niame,nikol,niahr,naira,naiad,nicho,naiam,nevee,noahl,nadia,noele,nikod,norah,nayya,naven,nisha,niomi,naial,noahu,nairn,naire,nikei,nerah,naria,noahr,nolan,numan,nylas,nieve,nuriy,novae,nanik,nanin,noorf,nicar,noura,niksh,nadea,navee,neahl,nichi,nairv,nanel,nahgr,novah,nevae,namra,nadar,nicky,nuran,nirne,nyahm,najma,naiom,nelia,natan,nusab,noell,niven,nayth,namee,nathi,noahj,nilet,nzube,nawar,natal,nakay,nadin,neila,nikit,niree,naila,nayaa,nawal,nadem,niani,nimra,nakae,noels,naomi,numve,nadit,nadir,navae,nyahl";
+            var z = k.Split(',').ToArray();
+            var x = z.Distinct().Count();
+            var vv = z.Count();
 
-            //Łatwiejszy sposób na wpisanie liter od a do z zamiast robić letterValue.Add() bierzemy wartość decymalną litery od litery a [97] do z [122]
-            for (float i = 97; i <= 122; i++)
-            {
-                letterValue.Add(((char)i).ToString(), new Dictionary<string, float>());
-            }
+
+            Random rand = new Random();
 
 
             Console.WriteLine("Pierwsza litera twojego nicku");
             string choice = char.ToLower(Console.ReadKey().KeyChar).ToString();
-
 
             var pathToNames = @"C:\Users\Ragnus\Downloads\babies-first-names-2010-2018.csv"; // Habeeb, "Dubai Media City, Dubai"
             using (TextFieldParser ParserCsv = new TextFieldParser(pathToNames))
@@ -49,16 +50,69 @@ namespace MakarovChain
 
             }
 
+            //Choice == first letter to start from , Names = Names starting with choice
 
-            //// W każdym string musimy lecieć po każdej literce i sprawdzać jaka jest jej kolejna litera
-            var counterForLetter = new Dictionary<string, float>();
-            string finalString = "" + choice;
 
-            while (finalString.Length != 5)
+            //InitialsState == get second letter count all occurence get proper next index
+            while (NamesToReturn.Count < 50)
             {
-                GenereteValuesToKeys(choice, counterForLetter,letterValue);
-                Console.WriteLine(choice);
-                foreach (KeyValuePair<string, Dictionary<string, float>> charWithCharValues in letterValue)
+                SeriesValue = new Dictionary<string, Dictionary<string, float>>();
+                SeriesValue = InitalState(rand, choice);
+                string getWord = " ";
+
+                do
+                {
+                    getWord = GetWord(SeriesValue, rand);
+                } while (NamesToReturn.Any(a => string.Equals(a, getWord, StringComparison.CurrentCultureIgnoreCase)) 
+                         || Names.Any(a => string.Equals(a, getWord, StringComparison.CurrentCultureIgnoreCase)));
+
+                
+
+                NamesToReturn.Add(getWord);
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("---------------------------------------------------------------------------------------------------");
+            NamesToReturn.ForEach(a => Console.Write(a + ","));
+        }
+
+        /// <summary>
+        /// Generate word using pair from initialState.
+        /// </summary>
+        /// <param name="seriesValue">Dictionary containg given pair and empty new dicionary</param>
+        /// <param name="rand">rand object used for probability</param>
+        private static string GetWord(Dictionary<string, Dictionary<string, float>> seriesValue, Random rand)
+        {
+            string finalString = seriesValue.Keys.First();
+            string twoLastLetters = seriesValue.Keys.First();
+
+            while (finalString.Length != 7)
+            {
+                Names.ForEach(a =>
+                {
+                    a = a.ToLower();
+                    a = Regex.Replace(a, "[^0-9a-zA-Z]+", "");
+                    a = a.Replace(" ", "");
+
+                    if (a.Contains(twoLastLetters))
+                    {
+                        if (a.IndexOf(twoLastLetters) + twoLastLetters.Length < a.Length)
+                        {
+                            string nextLetter = a.Substring(a.IndexOf(twoLastLetters) + twoLastLetters.Length, 1);
+
+                            if (char.IsLetter(Convert.ToChar(nextLetter)) && !(string.IsNullOrEmpty(nextLetter)))
+                            {
+                                if (seriesValue[twoLastLetters].ContainsKey(nextLetter))
+                                    seriesValue[twoLastLetters][nextLetter]++;
+                                else
+                                    seriesValue[twoLastLetters].Add(nextLetter, 1);
+                            }
+
+                        }
+                    }
+                });
+
+                foreach (KeyValuePair<string, Dictionary<string, float>> charWithCharValues in seriesValue)
                 {
                     float sum = 0;
 
@@ -74,73 +128,82 @@ namespace MakarovChain
                         charWithCharValues.Value[charWithCharValues.Value.ElementAt(i).Key] /= sum;
                     }
                 }
-                foreach (KeyValuePair<string, float> yos in letterValue[choice])
+
+                while (true)
                 {
-                    if (rand.NextDouble() < yos.Value)
+                    foreach (KeyValuePair<string, float> currentKeyValue in seriesValue[twoLastLetters])
                     {
-                        finalString += yos.Key;
-                        choice = yos.Key;
-                        break;
+                        if (rand.NextDouble() < currentKeyValue.Value)
+                        {
+                            finalString += currentKeyValue.Key;
+                            goto Founded;
+                        }
                     }
                 }
 
+            Founded:
+                twoLastLetters = finalString.Substring(finalString.Length);
+                seriesValue = new Dictionary<string, Dictionary<string, float>>();
+                seriesValue.Add(twoLastLetters, new Dictionary<string, float>());
             }
-
-            Console.WriteLine();
-            Console.WriteLine(finalString);
+            return finalString;
         }
 
-        private static void GenereteValuesToKeys(string choice, Dictionary<string, float> counterForLetter, Dictionary<string, Dictionary<string, float>> letterValue)
+        /// <summary>
+        /// Create second letter to first written by user using probality. Return new SeriesOfValues With selected letter as key
+        /// </summary>
+        /// <param name="rand">random obj which will generate propability</param>
+        /// <param name="choice">The first letter written by user</param>
+        private static Dictionary<string, Dictionary<string, float>> InitalState(Random rand, string choice)
         {
+            finalString = "";
+            SeriesValue.Add(choice, new Dictionary<string, float>());
             Names.ForEach(a =>
             {
-                a = a.ToLower();
-                a = Regex.Replace(a, "[^0-9a-zA-Z]+", "");
-                a = a.Replace(" ", "");
-                
-                
+                string nextLetter = a[1].ToString();
 
-
-                if (choice.Length > 1)
+                if (char.IsLetter(Convert.ToChar(nextLetter)) && !(string.IsNullOrEmpty(nextLetter)))
                 {
-                    letterValue = new Dictionary<string, Dictionary<string, float>>();
-
-                    if (a.Contains(choice))
-                    {
-                        string nextValue = a.Substring(a.IndexOf(choice) - 1, choice.Length + 1);
-                        if (letterValue.ContainsKey(nextValue))
-                            letterValue[choice][nextValue]++;
-                        else
-                            letterValue[choice].Add(nextValue, 1);
-                    }
-                }
-
-                else
-                {
-                    for (int i = 0; i < a.Length - 1; i++)
-                    {
-
-                        string n = a[i].ToString();
-                        string nnex = a[i + 1].ToString();
-
-                        if (counterForLetter.ContainsKey(n))
-                            counterForLetter[n]++;
-                        else
-                            counterForLetter.Add(n, 1);
-
-
-
-
-                        if (letterValue[n].ContainsKey(nnex))
-                            letterValue[n][nnex] += counterForLetter[n];
-                        else
-                            letterValue[n].Add(nnex, counterForLetter[n]);
-
-                    }
+                    if (SeriesValue[choice].ContainsKey(nextLetter))
+                        SeriesValue[choice][nextLetter]++;
+                    else
+                        SeriesValue[choice].Add(nextLetter, 1);
                 }
             });
-        }
 
+            foreach (KeyValuePair<string, Dictionary<string, float>> charWithCharValues in SeriesValue)
+            {
+                float sum = 0;
+
+                //First loop for count all instances of letter
+                foreach (KeyValuePair<string, float> yos in charWithCharValues.Value)
+                {
+                    sum += yos.Value;
+                }
+
+                //After loop every value will have percentage of all values meaning that for example a will be 0,2 b will be 0,09
+                for (int i = 0; i < charWithCharValues.Value.Count; i++)
+                {
+                    charWithCharValues.Value[charWithCharValues.Value.ElementAt(i).Key] /= sum;
+                }
+            }
+
+            while (finalString.Length < 2)
+            {
+                foreach (KeyValuePair<string, float> currentKeyValue in SeriesValue[choice])
+                {
+                    if (rand.NextDouble() < currentKeyValue.Value)
+                    {
+                        finalString += currentKeyValue.Key;
+                        SeriesValue = new Dictionary<string, Dictionary<string, float>>();
+                        SeriesValue.Add(choice + finalString, new Dictionary<string, float>());
+                        return SeriesValue;
+                    }
+                }
+            }
+
+            return null;
+        }
     }
 }
 
