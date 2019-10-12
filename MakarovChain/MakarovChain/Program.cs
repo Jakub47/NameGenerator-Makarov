@@ -25,11 +25,11 @@ namespace MakarovChain
             Console.WriteLine("Pierwsza litera twojego nicku");
             string choice = char.ToLower(Console.ReadKey().KeyChar).ToString();
 
-            var pathToNames = @"C:\Users\Ragnus\Downloads\babies-first-names-2010-2018.csv"; // Habeeb, "Dubai Media City, Dubai"
+            var pathToNames = @"C:\Users\Ragnus\Desktop\MakarovChain\NameGenerator-Makarov\MakarovChain\MakarovChain\imiona_pl.csv"; // Habeeb, "Dubai Media City, Dubai"
             using (TextFieldParser ParserCsv = new TextFieldParser(pathToNames))
             {
                 ParserCsv.CommentTokens = new string[] { "#" };
-                ParserCsv.SetDelimiters(new string[] { "," });
+                ParserCsv.SetDelimiters(new string[] { "," ,"'"});
                 ParserCsv.HasFieldsEnclosedInQuotes = true;
 
                 ParserCsv.ReadLine();
@@ -39,8 +39,8 @@ namespace MakarovChain
                     string[] entites = ParserCsv.ReadFields();
 
                     //To make sure i will not get all 60000 records select only words starting with given words
-                    if (char.ToLower(entites[2][0]).ToString() == choice)
-                        Names.Add(entites[2]);
+                    
+                        Names.Add(entites[1]);
                 }
 
             }
@@ -56,9 +56,19 @@ namespace MakarovChain
                 SeriesValue = InitalState(rand, choice);
                 string getWord = " ";
 
+                int countNuls = 0;
+
                 do
                 {
                     getWord = GetWord(SeriesValue, rand);
+                    if (getWord == null)
+                        countNuls++;
+
+                    if(countNuls > 10)
+                    {
+                        SeriesValue = InitalState(rand, choice);
+                        countNuls = 0;
+                    }
                 } while ( getWord == null || NamesToReturn.Any(a => string.Equals(a, getWord, StringComparison.CurrentCultureIgnoreCase)) 
                          || Names.Any(a => string.Equals(a, getWord, StringComparison.CurrentCultureIgnoreCase)));
 
@@ -85,7 +95,7 @@ namespace MakarovChain
             string nextLLetter = "";
             bool b1 = false; bool b2 = false;
 
-            while (finalString.Length != 7)
+            while (finalString.Length != 5)
             {
                 Names.ForEach(a =>
                 {
@@ -203,7 +213,7 @@ namespace MakarovChain
                 {
                     if (rand.NextDouble() < currentKeyValue.Value)
                     {
-                        finalString += currentKeyValue.Key;
+                        finalString += currentKeyValue.Key.ToLower();
                         SeriesValue = new Dictionary<string, Dictionary<string, float>>();
                         SeriesValue.Add(choice + finalString, new Dictionary<string, float>());
                         return SeriesValue;
