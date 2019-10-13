@@ -39,16 +39,42 @@ namespace MakarovChain
                     string[] entites = ParserCsv.ReadFields();
 
                     //To make sure i will not get all 60000 records select only words starting with given words
-                    
-                        Names.Add(entites[1]);
+                    Names.Add(entites[1]);
                 }
+            }
 
+            if(Names.Where(a => a[0].ToString().ToLower() == choice.ToLower()).Count() < 2 || Names.Count == 0)
+            {
+                Names =  new List<string>();
+                pathToNames = @"C:\Users\Ragnus\Desktop\MakarovChain\NameGenerator-Makarov\MakarovChain\MakarovChain\babies-first-names-2010-2018.csv"; // Habeeb, "Dubai Media City, Dubai"
+                using (TextFieldParser ParserCsv = new TextFieldParser(pathToNames))
+                {
+                    ParserCsv.CommentTokens = new string[] { "#" };
+                    ParserCsv.SetDelimiters(new string[] { ",", "'" });
+                    ParserCsv.HasFieldsEnclosedInQuotes = true;
+
+                    ParserCsv.ReadLine();
+
+                    while (!ParserCsv.EndOfData)
+                    {
+                        string[] entites = ParserCsv.ReadFields();
+                        if (char.ToLower(entites[2][0]).ToString() == choice)
+                            Names.Add(entites[2]);
+
+                        if(char.ToLower(choice[0]) == 'q' || char.ToLower(choice[0]) == 'x')
+                        {
+                            if(entites[2].ToLower().Contains(char.ToLower(choice[0])))
+                                Names.Add(entites[2]);
+                        }
+                    }
+
+                }
             }
 
 
             //Choice == first letter to start from , Names = Names starting with choice
 
-
+            int k = 0;
             //InitialsState == get second letter count all occurence get proper next index
             while (NamesToReturn.Count < 100)
             {
@@ -57,9 +83,17 @@ namespace MakarovChain
                 string getWord = " ";
 
                 int countNuls = 0;
+                int counterForNamesToReturn = 0;
+                int counterForNames = 0;
 
                 do
                 {
+                    if (NamesToReturn.Any(a => string.Equals(a, getWord, StringComparison.CurrentCultureIgnoreCase)))
+                        counterForNamesToReturn++;
+
+                    if (Names.Any(a => string.Equals(a, getWord, StringComparison.CurrentCultureIgnoreCase)))
+                        counterForNames++;
+
                     getWord = GetWord(SeriesValue, rand);
                     if (getWord == null)
                         countNuls++;
@@ -69,10 +103,20 @@ namespace MakarovChain
                         SeriesValue = InitalState(rand, choice);
                         countNuls = 0;
                     }
+
+                    if (countNuls > 100 || counterForNamesToReturn > 100 || counterForNames > 100)
+                    {
+                        SeriesValue = InitalState(rand, choice, getWord);
+                        countNuls = 0;
+                        counterForNamesToReturn = 0;
+                        counterForNames = 0;
+                    }
+
                 } while ( getWord == null || NamesToReturn.Any(a => string.Equals(a, getWord, StringComparison.CurrentCultureIgnoreCase)) 
                          || Names.Any(a => string.Equals(a, getWord, StringComparison.CurrentCultureIgnoreCase)));
 
-                
+                k++;
+                Console.WriteLine("Wygenerowano: " + k + " słów");
 
                 NamesToReturn.Add(getWord);
             }
@@ -173,20 +217,23 @@ namespace MakarovChain
         /// </summary>
         /// <param name="rand">random obj which will generate propability</param>
         /// <param name="choice">The first letter written by user</param>
-        private static Dictionary<string, Dictionary<string, float>> InitalState(Random rand, string choice)
+        private static Dictionary<string, Dictionary<string, float>> InitalState(Random rand, string choice,string returnTooMany = null)
         {
             finalString = "";
             SeriesValue.Add(choice, new Dictionary<string, float>());
             Names.ForEach(a =>
             {
-                string nextLetter = a[1].ToString();
-
-                if (char.IsLetter(Convert.ToChar(nextLetter)) && !(string.IsNullOrEmpty(nextLetter)))
+                if (a.Count() > 1)
                 {
-                    if (SeriesValue[choice].ContainsKey(nextLetter))
-                        SeriesValue[choice][nextLetter]++;
-                    else
-                        SeriesValue[choice].Add(nextLetter, 1);
+                    string nextLetter = a[1].ToString();
+
+                    if (char.IsLetter(Convert.ToChar(nextLetter)) && !(string.IsNullOrEmpty(nextLetter)))
+                    {
+                        if (SeriesValue[choice].ContainsKey(nextLetter))
+                            SeriesValue[choice][nextLetter]++;
+                        else
+                            SeriesValue[choice].Add(nextLetter, 1);
+                    }
                 }
             });
 
