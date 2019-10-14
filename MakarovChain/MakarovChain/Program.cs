@@ -18,7 +18,7 @@ namespace MakarovChain
 
         static void Main(string[] args)
         {
-           
+
             Random rand = new Random();
 
 
@@ -29,7 +29,7 @@ namespace MakarovChain
             using (TextFieldParser ParserCsv = new TextFieldParser(pathToNames))
             {
                 ParserCsv.CommentTokens = new string[] { "#" };
-                ParserCsv.SetDelimiters(new string[] { "," ,"'"});
+                ParserCsv.SetDelimiters(new string[] { ",", "'" });
                 ParserCsv.HasFieldsEnclosedInQuotes = true;
 
                 ParserCsv.ReadLine();
@@ -43,9 +43,9 @@ namespace MakarovChain
                 }
             }
 
-            if(Names.Where(a => a[0].ToString().ToLower() == choice.ToLower()).Count() < 2 || Names.Count == 0)
+            if (Names.Where(a => a[0].ToString().ToLower() == choice.ToLower()).Count() < 2 || Names.Count == 0)
             {
-                Names =  new List<string>();
+                Names = new List<string>();
                 pathToNames = @"C:\Users\Ragnus\Desktop\MakarovChain\NameGenerator-Makarov\MakarovChain\MakarovChain\babies-first-names-2010-2018.csv"; // Habeeb, "Dubai Media City, Dubai"
                 using (TextFieldParser ParserCsv = new TextFieldParser(pathToNames))
                 {
@@ -61,9 +61,9 @@ namespace MakarovChain
                         if (char.ToLower(entites[2][0]).ToString() == choice)
                             Names.Add(entites[2]);
 
-                        if(char.ToLower(choice[0]) == 'q' || char.ToLower(choice[0]) == 'x')
+                        if (char.ToLower(choice[0]) == 'q' || char.ToLower(choice[0]) == 'x')
                         {
-                            if(entites[2].ToLower().Contains(char.ToLower(choice[0])))
+                            if (entites[2].ToLower().Contains(char.ToLower(choice[0])))
                                 Names.Add(entites[2]);
                         }
                     }
@@ -76,7 +76,7 @@ namespace MakarovChain
 
             int k = 0;
             //InitialsState == get second letter count all occurence get proper next index
-            while (NamesToReturn.Count < 100)
+            while (NamesToReturn.Count < 20)
             {
                 SeriesValue = new Dictionary<string, Dictionary<string, float>>();
                 SeriesValue = InitalState(rand, choice);
@@ -98,7 +98,7 @@ namespace MakarovChain
                     if (getWord == null)
                         countNuls++;
 
-                    if(countNuls > 10)
+                    if (countNuls > 10)
                     {
                         SeriesValue = InitalState(rand, choice);
                         countNuls = 0;
@@ -112,7 +112,7 @@ namespace MakarovChain
                         counterForNames = 0;
                     }
 
-                } while ( getWord == null || NamesToReturn.Any(a => string.Equals(a, getWord, StringComparison.CurrentCultureIgnoreCase)) 
+                } while (getWord == null || NamesToReturn.Any(a => string.Equals(a, getWord, StringComparison.CurrentCultureIgnoreCase))
                          || Names.Any(a => string.Equals(a, getWord, StringComparison.CurrentCultureIgnoreCase)));
 
                 k++;
@@ -205,7 +205,7 @@ namespace MakarovChain
                 }
 
             Founded:
-                twoLastLetters = finalString.Substring(finalString.Length - 2);
+                twoLastLetters = finalString.Substring(finalString.Length - 3);
                 seriesValue = new Dictionary<string, Dictionary<string, float>>();
                 seriesValue.Add(twoLastLetters, new Dictionary<string, float>());
             }
@@ -217,10 +217,36 @@ namespace MakarovChain
         /// </summary>
         /// <param name="rand">random obj which will generate propability</param>
         /// <param name="choice">The first letter written by user</param>
-        private static Dictionary<string, Dictionary<string, float>> InitalState(Random rand, string choice,string returnTooMany = null)
+        private static Dictionary<string, Dictionary<string, float>> InitalState(Random rand, string choice, string returnTooMany = null)
         {
-            finalString = "";
+            finalString = choice;
             SeriesValue.Add(choice, new Dictionary<string, float>());
+            v(choice);
+
+            while (finalString.Length < 3)
+            {
+                foreach (KeyValuePair<string, float> currentKeyValue in SeriesValue[choice])
+                {
+                    if (rand.NextDouble() < currentKeyValue.Value)
+                    {
+                        finalString += currentKeyValue.Key.ToLower();
+                        choice = currentKeyValue.Key.ToLower();
+                        SeriesValue = new Dictionary<string, Dictionary<string, float>>();
+                        SeriesValue.Add(choice, new Dictionary<string, float>());
+                        v(choice);
+                        break;
+                    }
+                }
+            }
+
+            SeriesValue = new Dictionary<string, Dictionary<string, float>>();
+            SeriesValue.Add(finalString, new Dictionary<string, float>());
+            return SeriesValue;
+
+        }
+
+        private static void v(string choice)
+        {
             Names.ForEach(a =>
             {
                 if (a.Count() > 1)
@@ -253,22 +279,6 @@ namespace MakarovChain
                     charWithCharValues.Value[charWithCharValues.Value.ElementAt(i).Key] /= sum;
                 }
             }
-
-            while (finalString.Length < 2)
-            {
-                foreach (KeyValuePair<string, float> currentKeyValue in SeriesValue[choice])
-                {
-                    if (rand.NextDouble() < currentKeyValue.Value)
-                    {
-                        finalString += currentKeyValue.Key.ToLower();
-                        SeriesValue = new Dictionary<string, Dictionary<string, float>>();
-                        SeriesValue.Add(choice + finalString, new Dictionary<string, float>());
-                        return SeriesValue;
-                    }
-                }
-            }
-
-            return null;
         }
     }
 }
