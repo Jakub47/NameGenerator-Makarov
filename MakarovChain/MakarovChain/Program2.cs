@@ -9,6 +9,9 @@ using Microsoft.VisualBasic.FileIO;
 
 namespace MakarovChain
 {
+    /// <summary>
+    /// NOT USING SINCE IT RETURN 1 WORD
+    /// </summary>
     class Program2
     {
         private static List<string> Names = new List<string>();
