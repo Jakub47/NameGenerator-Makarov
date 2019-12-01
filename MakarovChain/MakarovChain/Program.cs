@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.FileIO;
-
 
 namespace MakarovChain
 {
@@ -23,9 +18,6 @@ namespace MakarovChain
 
         static void Main(string[] args)
         {
-            Stopwatch stopWatch = new Stopwatch();
-            stopWatch.Start();
-
             Console.WriteLine("Pierwsza litera twojego nicku");
             string choice = char.ToLower(Console.ReadKey().KeyChar).ToString();
             var pathToNames = @"C:\Users\Ragnus\Desktop\PI\MakarovChain\NameGenerator-Makarov\MakarovChain\MakarovChain\imiona_pl.csv"; // Habeeb, "Dubai Media City, Dubai"
@@ -79,37 +71,13 @@ namespace MakarovChain
                 letterValue.Add(((char)i).ToString(), new Dictionary<string, float>());
                 letterValue2.Add((char)i, new Dictionary<char, float>());
             }
-
             var N2 = GetWordsN2Ver(choice);
             AllNames.AddRange(N2);
             var N1 = GetWordsN1Ver(choice);
             AllNames.AddRange(N1);
             var N0 = GetWordsN0Ver(choice[0]);
             AllNames.AddRange(N0);
-            stopWatch.Stop();
 
-
-            Console.WriteLine();
-
-            Console.WriteLine();
-            int counter = 0;
-            foreach (var item in AllNames)
-            {
-                Console.Write(counter + ")" + item + "\t");
-                counter++;
-            }
-
-            string sec = "";
-            switch(stopWatch.Elapsed.Seconds)
-            {
-                case 1: sec = "sekunda"; break;
-                case 2:
-                case 3: sec = "sekundy"; break;
-                default: sec = "sekund"; break;
-            }
-
-            Console.WriteLine(); Console.WriteLine();
-            Console.WriteLine("Czas na wygenerowanie 90 słów przy wykorzystniu łańcucha markova zajął " + stopWatch.Elapsed.Seconds + " " + sec);
         }
 
         public static List<string> GetWordsN2Ver(string choice)
