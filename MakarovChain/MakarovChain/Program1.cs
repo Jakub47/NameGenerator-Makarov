@@ -82,7 +82,7 @@ namespace MakarovChain
             while (NamesToReturn.Count < 30)
             {
                 SeriesValue = new Dictionary<string, Dictionary<string, float>>();
-                SeriesValue = InitalState(rand, choice);
+                SeriesValue = InitalState1(rand, choice);
                 string getWord = " ";
 
                 int countNuls = 0;
@@ -97,19 +97,19 @@ namespace MakarovChain
                     if (Names.Any(a => string.Equals(a, getWord, StringComparison.CurrentCultureIgnoreCase)))
                         counterForNames++;
 
-                    getWord = GetWord(SeriesValue, rand);
+                    getWord = GetWord1(SeriesValue, rand);
                     if (getWord == null)
                         countNuls++;
 
                     if(countNuls > 10)
                     {
-                        SeriesValue = InitalState(rand, choice);
+                        SeriesValue = InitalState1(rand, choice);
                         countNuls = 0;
                     }
 
                     if (countNuls > 100 || counterForNamesToReturn > 100 || counterForNames > 100)
                     {
-                        SeriesValue = InitalState(rand, choice, getWord);
+                        SeriesValue = InitalState1(rand, choice, getWord);
                         countNuls = 0;
                         counterForNamesToReturn = 0;
                         counterForNames = 0;
@@ -134,7 +134,7 @@ namespace MakarovChain
         /// </summary>
         /// <param name="seriesValue">Dictionary containg given pair and empty new dicionary</param>
         /// <param name="rand">rand object used for probability</param>
-        private static string GetWord(Dictionary<string, Dictionary<string, float>> seriesValue, Random rand)
+        private static string GetWord1(Dictionary<string, Dictionary<string, float>> seriesValue, Random rand)
         {
             string finalString = seriesValue.Keys.First();
             string twoLastLetters = seriesValue.Keys.First();
@@ -220,7 +220,7 @@ namespace MakarovChain
         /// </summary>
         /// <param name="rand">random obj which will generate propability</param>
         /// <param name="choice">The first letter written by user</param>
-        private static Dictionary<string, Dictionary<string, float>> InitalState(Random rand, string choice,string returnTooMany = null)
+        private static Dictionary<string, Dictionary<string, float>> InitalState1(Random rand, string choice,string returnTooMany = null)
         {
             finalString = "";
             SeriesValue.Add(choice, new Dictionary<string, float>());

@@ -19,7 +19,7 @@ namespace MakarovChain
         private static List<string> NamesToReturn = new List<string>();
 
 
-        static void Main(string[] args)
+        static void Main5(string[] args)
         {
             Random rand = new Random();
 
@@ -79,7 +79,7 @@ namespace MakarovChain
             while (NamesToReturn.Count <= 30)
             {
                 var counterForLetter = new Dictionary<string, float>();
-                GenereteValuesToKeys(choice, counterForLetter, letterValue);
+                GenereteValuesToKeys2(choice, counterForLetter, letterValue);
                 foreach (KeyValuePair<string, Dictionary<string, float>> charWithCharValues in letterValue)
                 {
                     float sum = 0;
@@ -96,7 +96,7 @@ namespace MakarovChain
                         charWithCharValues.Value[charWithCharValues.Value.ElementAt(i).Key] /= sum;
                     }
                 }
-                string result = GetWord(choice);
+                string result = GetWord2(choice);
 
                 if (result != null && !(NamesToReturn.Any(a => a == result)))
                     NamesToReturn.Add(result);
@@ -110,7 +110,7 @@ namespace MakarovChain
             }
         }
 
-        private static void GenereteValuesToKeys(string choice, Dictionary<string, float> counterForLetter, Dictionary<string, Dictionary<string, float>> letterValue)
+        private static void GenereteValuesToKeys2(string choice, Dictionary<string, float> counterForLetter, Dictionary<string, Dictionary<string, float>> letterValue)
         {
             Names.ForEach(a =>
             {
@@ -162,7 +162,7 @@ namespace MakarovChain
         }
 
 
-        private static string GetWord(string choice)
+        private static string GetWord2(string choice)
         {
             string finalString = "" + choice;
             Random rand = new Random();
