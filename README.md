@@ -1,2 +1,2 @@
 # NameGenerator-Makarov
-Algorithm for genereting random names using makarov chain with sample file (.csv) 
+Algorithm for genereting procedural names using makarov chain using polish names in csv file 
